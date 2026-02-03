@@ -24,7 +24,7 @@ export default function LoginPage() {
   });
 
   const onSubmit = () => {
-    router.push("/home");
+    router.push("/dashboard");
   };
 
   return (
