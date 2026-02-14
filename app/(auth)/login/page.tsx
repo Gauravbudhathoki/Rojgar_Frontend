@@ -6,6 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/validation";
 import InputField from "@/components/inputfield";
 import Image from "next/image";
+import { handleLogin } from "@/lib/actions/auth-action";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { Eye, EyeOff } from "lucide-react";
 
 type LoginForm = {
   email: string;
@@ -14,6 +18,8 @@ type LoginForm = {
 
 export default function LoginPage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     register,
@@ -23,8 +29,24 @@ export default function LoginPage() {
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = () => {
-    router.push("/dashboard");
+  const onSubmit = async (data: LoginForm) => {
+    try {
+      setLoading(true);
+      const result = await handleLogin(data);
+
+      if (result.success) {
+        toast.success("Welcome back! Login successful.");
+        router.replace("/dashboard");
+        router.refresh();
+      } else {
+        toast.error(result.message ?? "Invalid credentials");
+      }
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error("Login failed");
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -34,7 +56,7 @@ export default function LoginPage() {
           src="/images/image.png"
           alt="Rojgar Image"
           width={400}
-          height={400} 
+          height={400}
           className="mb-6"
         />
         <h2 className="text-3xl font-bold text-center">
@@ -45,33 +67,67 @@ export default function LoginPage() {
       <div className="w-full md:w-1/2 flex items-center justify-center bg-[#ffffff]">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="bg-[#ffffff] p-8 w-96 rounded-xl border border-black"
+          className="p-8 w-96 rounded-xl border border-black shadow-lg bg-white"
         >
-          <h1 className="text-2xl font-bold text-center mb-6 text-black">LOG IN</h1>
+          <h1 className="text-2xl font-bold text-center mb-6 text-black uppercase tracking-tight">
+            Log In
+          </h1>
 
           <InputField
             label="Email"
             type="email"
+            placeholder="example@mail.com"
             register={register("email")}
             error={errors.email}
           />
 
-          <InputField
-            label="Password"
-            type="password"
-            register={register("password")}
-            error={errors.password}
-          />
+          <div className="mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Password
+            </label>
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                {...register("password")}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black pr-10 text-black"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.password.message}
+              </p>
+            )}
+            <div className="flex justify-end mt-2">
+              <span
+                onClick={() => router.push("/forgot-password")}
+                className="text-xs text-black font-semibold cursor-pointer hover:underline"
+              >
+                Forgot Password?
+              </span>
+            </div>
+          </div>
 
-          <button className="w-full bg-black text-white py-2 rounded mt-4">
-            Login
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-black text-white py-3 rounded-lg mt-4 font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50"
+          >
+            {loading ? "Logging in..." : "Login"}
           </button>
 
-          <p className="text-center mt-4 text-sm text-black">
-            Don’t have an account?{" "}
+          <p className="text-center mt-6 text-sm text-gray-600">
+            Don&apos;t have an account?{" "}
             <span
               onClick={() => router.push("/register")}
-              className="font-bold cursor-pointer"
+              className="text-black font-bold cursor-pointer hover:underline"
             >
               Sign Up
             </span>

@@ -8,7 +8,7 @@ import InputField from "@/components/inputfield";
 import Image from "next/image";
 
 type RegisterForm = {
-  name: string;
+  username: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -38,7 +38,7 @@ export default function RegisterPage() {
         >
           <h1 className="text-2xl font-bold text-center mb-6 text-black">REGISTER</h1>
 
-          <InputField label="Full Name" type="text" register={register("name")} error={errors.name} />
+          <InputField label="Username" type="text" register={register("username")} error={errors.username} />
           <InputField label="Email" type="email" register={register("email")} error={errors.email} />
           <InputField label="Password" type="password" register={register("password")} error={errors.password} />
           <InputField label="Confirm Password" type="password" register={register("confirmPassword")} error={errors.confirmPassword} />

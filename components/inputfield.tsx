@@ -4,6 +4,7 @@ type Props = {
   hookup?: string;
   label: string;
   type: string;
+  placeholder?: string;
   register: UseFormRegisterReturn;
   error?: FieldError;
 };
@@ -11,6 +12,7 @@ type Props = {
 export default function InputField({
   label,
   type,
+  placeholder,
   register,
   error,
 }: Props) {
@@ -22,6 +24,7 @@ export default function InputField({
 
       <input
         type={type}
+        placeholder={placeholder}
         {...register}
         className="
           w-full 
