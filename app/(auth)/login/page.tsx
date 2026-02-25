@@ -35,6 +35,14 @@ export default function LoginPage() {
       const result = await handleLogin(data);
 
       if (result.success) {
+        // ✅ Save token to localStorage for client-side API calls
+        if (result.token) {
+          localStorage.setItem('token', result.token);
+        }
+        if (result.data) {
+          localStorage.setItem('user', JSON.stringify(result.data));
+        }
+        
         toast.success("Welcome back! Login successful.");
         router.replace("/dashboard");
         router.refresh();
@@ -74,9 +82,9 @@ export default function LoginPage() {
           </h1>
 
           <InputField
-            label="Email"
-            type="email"
-            placeholder="example@mail.com"
+            label="Email or Username"
+            type="text"
+            placeholder="Enter your email or username"
             register={register("email")}
             error={errors.email}
           />

@@ -22,5 +22,14 @@ export const API = {
             UPDATE: '/api/admin/users',
             DELETE: '/api/admin/users'
         }
+    },
+    JOBS: {
+        BASE: '/api/jobs',
+        GET_ALL: '/api/jobs',
+        GET_BY_ID: (id: string) => `/api/jobs/${id}`,
+        CREATE: '/api/jobs',
+        GET_MY: '/api/jobs/my',
+        UPDATE: (id: string) => `/api/jobs/${id}`,
+        DELETE: (id: string) => `/api/jobs/${id}`,
     }
 }

@@ -6,6 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema } from "@/lib/validation";
 import InputField from "@/components/inputfield";
 import Image from "next/image";
+import { handleRegister } from "@/lib/actions/auth-action";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 type RegisterForm = {
   username: string;
@@ -16,6 +19,7 @@ type RegisterForm = {
 
 export default function RegisterPage() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -25,8 +29,23 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = () => {
-    router.push("/login");
+  const onSubmit = async (data: RegisterForm) => {
+    try {
+      setLoading(true);
+      const result = await handleRegister(data);
+
+      if (result.success) {
+        toast.success("Registration successful! Please login.");
+        router.push("/login");
+      } else {
+        toast.error(result.message ?? "Registration failed");
+      }
+    } catch (err: unknown) {
+      const error = err instanceof Error ? err : new Error("Registration failed");
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -38,13 +57,41 @@ export default function RegisterPage() {
         >
           <h1 className="text-2xl font-bold text-center mb-6 text-black">REGISTER</h1>
 
-          <InputField label="Username" type="text" register={register("username")} error={errors.username} />
-          <InputField label="Email" type="email" register={register("email")} error={errors.email} />
-          <InputField label="Password" type="password" register={register("password")} error={errors.password} />
-          <InputField label="Confirm Password" type="password" register={register("confirmPassword")} error={errors.confirmPassword} />
+          <InputField 
+            label="Username" 
+            type="text" 
+            register={register("username")} 
+            error={errors.username} 
+            placeholder="Enter your username"
+          />
+          <InputField 
+            label="Email" 
+            type="email" 
+            register={register("email")} 
+            error={errors.email}
+            placeholder="Enter your email"
+          />
+          <InputField 
+            label="Password" 
+            type="password" 
+            register={register("password")} 
+            error={errors.password}
+            placeholder="Enter your password"
+          />
+          <InputField 
+            label="Confirm Password" 
+            type="password" 
+            register={register("confirmPassword")} 
+            error={errors.confirmPassword}
+            placeholder="Confirm your password"
+          />
 
-          <button type="submit" className="w-full bg-black text-white py-2 rounded mt-4">
-            Sign Up
+          <button 
+            type="submit" 
+            className="w-full bg-black text-white py-2 rounded mt-4"
+            disabled={loading}
+          >
+            {loading ? "Signing up..." : "Sign Up"}
           </button>
 
           <p className="text-center mt-4 text-sm text-black">

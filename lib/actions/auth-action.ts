@@ -47,7 +47,7 @@ export async function handleLogin(loginData: LoginData) {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7 days
+        maxAge: 60 * 60 * 24 * 7,
         path: '/',
       });
 
@@ -56,7 +56,7 @@ export async function handleLogin(loginData: LoginData) {
         httpOnly: false,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
-        maxAge: 60 * 60 * 24 * 7, // 7 days
+        maxAge: 60 * 60 * 24 * 7,
         path: '/',
       });
 
@@ -64,12 +64,13 @@ export async function handleLogin(loginData: LoginData) {
       const userCheck = (await cookies()).get('user_data')?.value;
       console.log('handleLogin - Token saved:', !!tokenCheck);
       console.log('handleLogin - User saved:', !!userCheck);
-      console.log('handleLogin - User data:', userCheck);
 
+      // ✅ Return token so client can store in localStorage
       return { 
         success: true, 
         message: 'Login successful', 
-        data: result.data.user 
+        data: result.data.user,
+        token: result.data.token, // ✅ Add this
       };
     }
 
@@ -119,7 +120,6 @@ export async function handleRegister(registrationData: RegisterData) {
       };
     }
     
-    // Handle validation errors
     if (result.errors) {
       const errorMessages = Object.entries(result.errors)
         .map(([, error]: [string, unknown]) => {
@@ -351,7 +351,6 @@ export async function handleResetPassword(token: string, newPassword: string) {
   }
 }
 
-// Helper functions
 export async function getAuthToken() {
   const cookieStore = await cookies();
   return cookieStore.get('auth_token')?.value || null;
