@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/validation";
-import InputField from "@/components/inputfield";
 import Image from "next/image";
 import { handleLogin } from "@/lib/actions/auth-action";
 import { useState } from "react";
@@ -35,17 +34,22 @@ export default function LoginPage() {
       const result = await handleLogin(data);
 
       if (result.success) {
-        // ✅ Save token to localStorage for client-side API calls
-        if (result.token) {
-          localStorage.setItem('token', result.token);
+        if (result.data?.token) {
+          localStorage.setItem("token", result.data.token);
         }
-        if (result.data) {
-          localStorage.setItem('user', JSON.stringify(result.data));
+        if (result.data?.user) {
+          localStorage.setItem("user", JSON.stringify(result.data.user));
         }
-        
+
         toast.success("Welcome back! Login successful.");
-        router.replace("/dashboard");
+
+        const role = result.data?.user?.role?.trim();
         router.refresh();
+        if (role === "admin") {
+          router.replace("/admin");
+        } else {
+          router.replace("/dashboard");
+        }
       } else {
         toast.error(result.message ?? "Invalid credentials");
       }
@@ -58,88 +62,93 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#1e1e1e]">
-      <div className="hidden md:flex w-1/2 flex-col items-center justify-center bg-[#4a4a4a] text-white p-8">
-        <Image
-          src="/images/image.png"
-          alt="Rojgar Image"
-          width={400}
-          height={400}
-          className="mb-6"
-        />
-        <h2 className="text-3xl font-bold text-center">
-          Connecting Talent with Opportunity
-        </h2>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-[#2b2b2b] px-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md px-10 py-12">
 
-      <div className="w-full md:w-1/2 flex items-center justify-center bg-[#ffffff]">
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="p-8 w-96 rounded-xl border border-black shadow-lg bg-white"
-        >
-          <h1 className="text-2xl font-bold text-center mb-6 text-black uppercase tracking-tight">
-            Log In
-          </h1>
-
-          <InputField
-            label="Email or Username"
-            type="text"
-            placeholder="Enter your email or username"
-            register={register("email")}
-            error={errors.email}
+        {/* Logo */}
+        <div className="flex flex-col items-center mb-8">
+          <Image
+            src="/images/image.png"
+            alt="Rojgar Logo"
+            width={80}
+            height={80}
+            className="mb-2"
           />
+        </div>
 
-          <div className="mb-2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+
+          {/* Email */}
+          <div>
+            <input
+              type="text"
+              placeholder="Email or Username"
+              {...register("email")}
+              className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#2ee8c5] focus:border-transparent transition"
+            />
+            {errors.email && (
+              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+            )}
+          </div>
+
+          {/* Password */}
+          <div>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
+                placeholder="Password"
                 {...register("password")}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black pr-10 text-black"
+                className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#2ee8c5] focus:border-transparent transition pr-10"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-black"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition"
               >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
             {errors.password && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.password.message}
-              </p>
+              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
             )}
-            <div className="flex justify-end mt-2">
-              <span
-                onClick={() => router.push("/forgot-password")}
-                className="text-xs text-black font-semibold cursor-pointer hover:underline"
-              >
-                Forgot Password?
-              </span>
-            </div>
           </div>
 
+          {/* Forgot Password */}
+          <div className="flex justify-end -mt-1">
+            <span
+              onClick={() => router.push("/forgot-password")}
+              className="text-xs text-gray-400 hover:text-black cursor-pointer transition"
+            >
+              Forgot Password?
+            </span>
+          </div>
+
+          {/* Login Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-black text-white py-3 rounded-lg mt-4 font-bold hover:bg-zinc-800 transition-colors disabled:opacity-50"
+            className="w-full bg-black text-white py-3 rounded-lg font-bold text-sm hover:bg-zinc-800 active:scale-[0.98] transition-all disabled:opacity-50"
           >
             {loading ? "Logging in..." : "Login"}
           </button>
 
-          <p className="text-center mt-6 text-sm text-gray-600">
-            Don&apos;t have an account?{" "}
-            <span
-              onClick={() => router.push("/register")}
-              className="text-black font-bold cursor-pointer hover:underline"
-            >
-              Sign Up
-            </span>
-          </p>
+          {/* Divider */}
+          <div className="flex items-center gap-3 my-1">
+            <div className="flex-1 h-px bg-gray-100" />
+            <span className="text-xs text-gray-300">or</span>
+            <div className="flex-1 h-px bg-gray-100" />
+          </div>
+
+          {/* Sign Up Button */}
+          <button
+            type="button"
+            onClick={() => router.push("/register")}
+            className="w-full bg-black text-white py-3 rounded-lg font-bold text-sm hover:bg-zinc-800 active:scale-[0.98] transition-all"
+          >
+            Sign Up
+          </button>
+
         </form>
       </div>
     </div>

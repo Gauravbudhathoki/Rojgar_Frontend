@@ -1,7 +1,10 @@
+"use client";
+
 import React from 'react';
 import { Search, MapPin, Briefcase, Users, Star, ExternalLink, Globe, Mail, Heart, Share2, ChevronRight } from 'lucide-react';
 import Header from '@/components/header';
 import Footer from '@/components/footer';
+import Link from 'next/link';
 
 export default function CompaniesPage() {
   const categories = [
@@ -169,9 +172,9 @@ export default function CompaniesPage() {
                 </div>
 
                 <div className="flex gap-3">
-                  <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-100">
-                    View Company <ChevronRight size={18} />
-                  </button>
+                  <Link href="/browse-job" className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-100">
+                    View Jobs <ChevronRight size={18} />
+                  </Link>
                   <button className="w-12 h-12 flex items-center justify-center rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-400 hover:text-red-500 transition-all">
                     <Heart size={20} />
                   </button>
@@ -207,9 +210,9 @@ export default function CompaniesPage() {
               <p className="text-blue-100 text-lg mb-10 max-w-2xl mx-auto">
                 Explore more job opportunities and apply to companies that align with your career goals.
               </p>
-              <button className="bg-red-600 hover:bg-red-700 text-white px-10 py-4 rounded-xl font-bold transition-all flex items-center gap-2 mx-auto">
+              <Link href="/browse-job" className="bg-red-600 hover:bg-red-700 text-white px-10 py-4 rounded-xl font-bold transition-all flex items-center gap-2 mx-auto">
                 Browse Jobs <ChevronRight size={20} />
-              </button>
+              </Link>
             </div>
             <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
               <div className="absolute top-[-10%] right-[-5%] w-96 h-96 bg-white rounded-full blur-3xl" />
