@@ -190,7 +190,7 @@ export async function handleWhoAmI() {
       };
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+    const response = await fetch(`${API_BASE_URL}/api/profile/me`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -270,7 +270,7 @@ export async function handleUpdateProfile(profileData: FormData) {
       };
     }
 
-    const response = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+    const response = await fetch(`${API_BASE_URL}/api/profile/upload`, {
       method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -348,7 +348,7 @@ export async function handleUpdateProfile(profileData: FormData) {
 export async function handleRequestPasswordReset(email: string) {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/api/auth/forgot-password`,
+      `${API_BASE_URL}/api/auth/request-password-reset`,
       {
         method: "POST",
         headers: {
@@ -390,18 +390,17 @@ export async function handleResetPassword(
   newPassword: string
 ) {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token,
-        password: newPassword,
-        confirmPassword: newPassword,
-      }),
-      cache: "no-store",
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/auth/reset-password/${token}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ password: newPassword }),
+        cache: "no-store",
+      }
+    );
 
     const result = await response.json();
 

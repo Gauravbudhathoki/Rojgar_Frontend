@@ -78,7 +78,7 @@ export default function ProfilePage() {
     if (imagePath.startsWith("http")) return imagePath;
     const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5050";
     const timestamp = new Date().getTime();
-    return `${baseUrl}/${imagePath}?t=${timestamp}`;
+    return `${baseUrl}/profile_pictures/${imagePath}?t=${timestamp}`;
   };
 
   if (loading) {
