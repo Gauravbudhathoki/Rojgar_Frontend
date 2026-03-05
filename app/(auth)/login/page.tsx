@@ -4,11 +4,12 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "@/lib/validation";
+import InputField from "@/components/inputfield";
 import Image from "next/image";
 import { handleLogin } from "@/lib/actions/auth-action";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowRight } from "lucide-react";
 
 type LoginForm = {
   email: string;
@@ -44,12 +45,14 @@ export default function LoginPage() {
         toast.success("Welcome back! Login successful.");
 
         const role = result.data?.user?.role?.trim();
-        router.refresh();
+
         if (role === "admin") {
           router.replace("/admin");
         } else {
           router.replace("/dashboard");
         }
+
+        router.refresh();
       } else {
         toast.error(result.message ?? "Invalid credentials");
       }
@@ -62,93 +65,157 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#2b2b2b] px-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md px-10 py-12">
-
-        {/* Logo */}
-        <div className="flex flex-col items-center mb-8">
-          <Image
-            src="/images/image.png"
-            alt="Rojgar Logo"
-            width={80}
-            height={80}
-            className="mb-2"
-          />
+    <div className="min-h-screen flex bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-hidden">
+      {/* Left Panel - Brand & Visual */}
+      <div className="hidden lg:flex lg:w-1/2 flex-col items-center justify-center relative p-8">
+        {/* Animated background elements */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+          <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full blur-3xl opacity-20 animate-pulse" style={{ animationDelay: "1s" }}></div>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-
-          {/* Email */}
-          <div>
-            <input
-              type="text"
-              placeholder="Email or Username"
-              {...register("email")}
-              className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#2ee8c5] focus:border-transparent transition"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
-            )}
-          </div>
-
-          {/* Password */}
-          <div>
+        {/* Content */}
+        <div className="relative z-10 text-center">
+          <div className="mb-8 inline-block">
             <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                {...register("password")}
-                className="w-full px-4 py-3 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#2ee8c5] focus:border-transparent transition pr-10"
+              <Image
+                src="/images/image.png"
+                alt="Rojgar Image"
+                width={320}
+                height={320}
+                className="mb-2 drop-shadow-2xl"
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 transition"
-              >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
             </div>
-            {errors.password && (
-              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
-            )}
           </div>
 
-          {/* Forgot Password */}
-          <div className="flex justify-end -mt-1">
-            <span
-              onClick={() => router.push("/forgot-password")}
-              className="text-xs text-gray-400 hover:text-black cursor-pointer transition"
-            >
-              Forgot Password?
-            </span>
+          <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
+            Connecting Talent with <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent">Opportunity</span>
+          </h2>
+
+          <p className="text-slate-400 text-lg max-w-md mx-auto leading-relaxed">
+            Join thousands of professionals finding their perfect career match
+          </p>
+        </div>
+      </div>
+
+      {/* Right Panel - Login Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-4 relative">
+        {/* Form container */}
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="w-full max-w-md"
+        >
+          {/* Card background with gradient border effect */}
+          <div className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl border border-slate-700 shadow-2xl p-8 backdrop-blur-sm">
+            {/* Decorative gradient border */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-purple-500/10 rounded-2xl pointer-events-none"></div>
+
+            {/* Content */}
+            <div className="relative z-10">
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold text-white text-center">
+                  Welcome Back
+                </h1>
+                <p className="text-slate-400 text-sm text-center mt-2">
+                  Sign in to continue to your account
+                </p>
+              </div>
+
+              {/* Email Field */}
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-slate-200 mb-3">
+                  Email or Username
+                </label>
+                <input
+                  type="text"
+                  placeholder="you@example.com"
+                  {...register("email")}
+                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-500 transition-all duration-200"
+                />
+                {errors.email && (
+                  <p className="text-red-400 text-xs mt-2 font-medium">
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Password Field */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-3">
+                  <label className="block text-sm font-semibold text-slate-200">
+                    Password
+                  </label>
+                  <span
+                    onClick={() => router.push("/forgot-password")}
+                    className="text-xs text-blue-400 font-semibold cursor-pointer hover:text-blue-300 transition-colors"
+                  >
+                    Forgot?
+                  </span>
+                </div>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    {...register("password")}
+                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-500 pr-12 transition-all duration-200"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-red-400 text-xs mt-2 font-medium">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-3 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group mt-2"
+              >
+                {loading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    Logging in...
+                  </>
+                ) : (
+                  <>
+                    Sign In
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </button>
+
+              {/* Signup Link */}
+              <div className="mt-6 text-center">
+                <p className="text-slate-400 text-sm">
+                  Don&apos;t have an account?{" "}
+                  <span
+                    onClick={() => router.push("/register")}
+                    className="text-blue-400 font-bold cursor-pointer hover:text-blue-300 transition-colors"
+                  >
+                    Create one
+                  </span>
+                </p>
+              </div>
+            </div>
           </div>
 
-          {/* Login Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-black text-white py-3 rounded-lg font-bold text-sm hover:bg-zinc-800 active:scale-[0.98] transition-all disabled:opacity-50"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3 my-1">
-            <div className="flex-1 h-px bg-gray-100" />
-            <span className="text-xs text-gray-300">or</span>
-            <div className="flex-1 h-px bg-gray-100" />
+          {/* Trust indicator */}
+          <div className="mt-8 text-center text-xs text-slate-500">
+            <p>🔒 Your credentials are encrypted and secure</p>
           </div>
-
-          {/* Sign Up Button */}
-          <button
-            type="button"
-            onClick={() => router.push("/register")}
-            className="w-full bg-black text-white py-3 rounded-lg font-bold text-sm hover:bg-zinc-800 active:scale-[0.98] transition-all"
-          >
-            Sign Up
-          </button>
-
         </form>
       </div>
     </div>
